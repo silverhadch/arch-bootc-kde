@@ -18,8 +18,8 @@ ARG MULTIMEDIA_PACKAGES="qt6-multimedia-ffmpeg plymouth flatpakacpid aha clinfo 
 # CLI utilities
 ARG CLI_PACKAGES="bash-completion bat busybox duf fastfetch fd gping grml-zsh-config htop jq less lsof mcfly nano nix nvtop openssh powertop procs ripgrep tldr trash-cli tree usbutils vim wget wl-clipboard ydotool zsh zsh-completions"
 
-# Firmware / boot / drivers
-ARG FIRMWARE_PACKAGES="amd-ucode intel-ucode edk2-shell efibootmgr shim mesa libva-intel-driver libva-mesa-driver libva-nvidia-driver libva nvidia-open vpl-gpu-rt vulkan-icd-loader vulkan-intel vulkan-radeon"
+# Firmware / boot / drivers (added apparmor)
+ARG FIRMWARE_PACKAGES="amd-ucode intel-ucode edk2-shell efibootmgr shim mesa libva-intel-driver libva-mesa-driver libva-nvidia-driver libva nvidia-open vpl-gpu-rt vulkan-icd-loader vulkan-intel vulkan-radeon apparmor"
 
 # Network / VPN / SMB
 ARG NETWORK_PACKAGES="dnsmasq freerdp2 iproute2 iwd libmtp networkmanager-l2tp networkmanager-openconnect networkmanager-openvpn networkmanager-pptp networkmanager-strongswan networkmanager-vpnc nfs-utils nss-mdns samba smbclient ufw"
@@ -133,7 +133,33 @@ RUN pacman -Sy --noconfirm --refresh && \
     pacman -S --noconfirm --clean && \
     rm -rf /var/cache/pacman/pkg/*
 
-RUN systemctl enable sddm.service
+# ---------------------------
+# Enable/Disable systemd units safely
+# ---------------------------
+RUN systemctl disable dirmngr@etc-pacman.d-gnupg.socket || true && \
+    systemctl disable gpg-agent-browser@etc-pacman.d-gnupg.socket || true && \
+    systemctl disable gpg-agent-extra@etc-pacman.d-gnupg.socket || true && \
+    systemctl disable gpg-agent-ssh@etc-pacman.d-gnupg.socket || true && \
+    systemctl disable gpg-agent@etc-pacman.d-gnupg.socket || true && \
+    systemctl disable keyboxd@etc-pacman.d-gnupg.socket || true && \
+    systemctl disable archlinux-keyring-wkd-sync.timer || true && \
+    systemctl disable systemd-networkd-wait-online.service || true && \
+    systemctl disable systemd-networkd.service || true && \
+    systemctl enable plasma-setup-live-system.service || true && \
+    systemctl enable nvidia-suspend.service || true && \
+    systemctl enable nvidia-hibernate.service || true && \
+    systemctl enable nvidia-resume.service || true && \
+    systemctl enable bluetooth.service || true && \
+    systemctl enable cups.service || true && \
+    systemctl enable tuned.service || true && \
+    systemctl enable tuned-ppd.service || true && \
+    systemctl enable thermald.service || true && \
+    systemctl enable apparmor.service || true && \
+    systemctl enable sddm.service || true && \
+    systemctl enable avahi-daemon.socket || true && \
+    systemctl enable avahi-daemon.service || true && \
+    systemctl enable accounts-daemon.service || true && \
+    systemctl enable NetworkManager.service || true
 
 # ---------------------------
 # Generate reproducible dracut initramfs
