@@ -11,7 +11,7 @@ RUN BUILD_DATE=$(curl --fail --silent https://cdn.kde.org/kde-linux/packaging/bu
     # Point pacman to Arch snapshot
     echo "Server = https://archive.archlinux.org/repos/${BUILD_DATE}/\$repo/os/\$arch" > /etc/pacman.d/mirrorlist && \
     # Add KDE Linux repos
-    cat >> /etc/pacman.conf <<EOF
+    cat <<EOF >> /etc/pacman.conf
 [kde-linux]
 SigLevel = Never
 Server = https://cdn.kde.org/kde-linux/packaging/packages/
@@ -29,7 +29,8 @@ COPY ./packages /packages
 # ---------------------------
 # Install base-devel and refresh twice
 # ---------------------------
-RUN pacman -Sy --noconfirm --refresh && pacman -Sy --noconfirm --refresh && \
+RUN pacman -Sy --noconfirm --refresh && \
+    pacman -Sy --noconfirm --refresh && \
     pacman -S --noconfirm sudo base-devel && \
     rm -rf /var/cache/pacman/pkg/*
 
