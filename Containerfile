@@ -25,13 +25,10 @@ RUN BUILD_DATE=$(curl --fail --silent https://cdn.kde.org/kde-linux/packaging/bu
 # Create writable directories in /var and set up symlinks
 # ---------------------------
 RUN mkdir -p /var/nix /var/etc && \
-    # Copy existing /etc contents to /var/etc
-    cp -a /etc/. /var/etc/ && \
-    # Remove original directories
-    rm -rf /etc /nix && \
-    # Create symlinks from original paths to /var locations
-    ln -s /var/etc /etc && \
-    ln -s /var/nix /nix
+    # Copy existing /etc contents to /var/etc, excluding runtime-mounted files
+    find /etc -maxdepth 1 -mindepth 1 -not -name "hosts" -not -name "hostname" -not -name "resolv.conf" -exec cp -a {} /var/etc/ \; && \
+    # Create /nix symlink
+    ln -sf /var/nix /nix
 
 # ---------------------------
 # Copy local PKGBUILDs
@@ -80,10 +77,18 @@ RUN pacman -Sy --noconfirm --refresh && \
     pacman -S --noconfirm \
         dracut linux linux-firmware ostree composefs systemd \
         btrfs-progs e2fsprogs xfsprogs udev cpio zstd binutils dosfstools \
-        conmon crun netavark skopeo dbus dbus-glib glib2 shadow nix \
+        conmon crun netavark skopeo dbus dbus-glib glib2 shadow \
         kde-banana-* && \
     pacman -S --noconfirm --clean && \
     rm -rf /var/cache/pacman/pkg/*
+
+# ---------------------------
+# Finalize /etc symlink setup (after all package installations)
+# ---------------------------
+RUN # Move the remaining files that weren't copied earlier
+    find /etc -maxdepth 1 -mindepth 1 -not -name "hosts" -not -name "hostname" -not -name "resolv.conf" -exec mv {} /var/etc/ \; 2>/dev/null || true && \
+    # Create the /etc symlink
+    ln -sf /var/etc /etc
 
 # ---------------------------
 # Generate reproducible dracut initramfs
