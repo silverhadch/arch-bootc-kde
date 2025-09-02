@@ -50,7 +50,7 @@ RUN BUILD_DATE=$(curl --fail --silent https://cdn.kde.org/kde-linux/packaging/bu
         echo "ERROR: Could not fetch build_date.txt — refusing to build out-of-sync image." >&2; \
         exit 1; \
     fi && \
-    rm -rf /etc/pacman.d/mirrorlist
+    rm -rf /etc/pacman.d/mirrorlist && \
     echo "Server = https://archive.archlinux.org/repos/${BUILD_DATE}/\$repo/os/\$arch" > /etc/pacman.d/mirrorlist && \
     printf '%s\n' \
         '[kde-linux]' \
