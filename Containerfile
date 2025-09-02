@@ -11,7 +11,7 @@ RUN BUILD_DATE=$(curl --fail --silent https://cdn.kde.org/kde-linux/packaging/bu
     # Point pacman to Arch snapshot
     echo "Server = https://archive.archlinux.org/repos/${BUILD_DATE}/\$repo/os/\$arch" > /etc/pacman.d/mirrorlist && \
     # Add KDE Linux repos
-    cat <<- EOF >> /etc/pacman.conf
+    cat >> /etc/pacman.conf <<EOF
 [kde-linux]
 SigLevel = Never
 Server = https://cdn.kde.org/kde-linux/packaging/packages/
