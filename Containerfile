@@ -38,8 +38,7 @@ COPY ./packages /packages
 # ---------------------------
 # Install base-devel and refresh twice
 # ---------------------------
-RUN pacman -Sy --noconfirm --refresh && \
-    pacman -Sy --noconfirm --refresh && \
+RUN pacman -Sy --noconfirm --refresh --refresh && \
     pacman -S --noconfirm sudo base-devel && \
     rm -rf /var/cache/pacman/pkg/*
 
@@ -78,9 +77,11 @@ RUN pacman -Sy --noconfirm --refresh && \
         dracut linux linux-firmware ostree composefs systemd \
         btrfs-progs e2fsprogs xfsprogs udev cpio zstd binutils dosfstools \
         conmon crun netavark skopeo dbus dbus-glib glib2 shadow nix \
-        kde-banana-* && \
+        kde-linux sddm && \
     pacman -S --noconfirm --clean && \
     rm -rf /var/cache/pacman/pkg/*
+
+RUN systemctl enable sddm.service
 
 # ---------------------------
 # Generate reproducible dracut initramfs
