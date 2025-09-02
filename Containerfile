@@ -50,7 +50,8 @@ RUN BUILD_DATE=$(curl --fail --silent https://cdn.kde.org/kde-linux/packaging/bu
         echo "ERROR: Could not fetch build_date.txt — refusing to build out-of-sync image." >&2; \
         exit 1; \
     fi && \
-    echo "Server = https://archive.archlinux.org/repos/${BUILD_DATE}/\$repo/os/\$arch" > /etc/pacman.d/mirrorlist && \
+    rm -rf /etc/pacman.d/mirrorlist
+    echo "Server = https://archive.archlinux.org/repos/${BUILD_DATE}/\$repo/os/\$arch" >> /etc/pacman.d/mirrorlist && \
     printf '%s\n' \
         '[kde-linux]' \
         'SigLevel = Never' \
@@ -76,7 +77,7 @@ COPY ./packages /packages
 # ---------------------------
 # Install base-devel and refresh twice
 # ---------------------------
-RUN pacman -Sy --noconfirm --refresh --refresh && \
+RUN pacman -Syyuu && \
     pacman -S --noconfirm sudo base-devel git && \
     rm -rf /var/cache/pacman/pkg/*
 
