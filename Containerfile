@@ -40,7 +40,7 @@ ARG USER_PACKAGES="accountsservice aspell cryfs editorconfig-core-c encfs ffmpeg
 ARG HARDWARE_PACKAGES="xorg-xwayland acsccid bmusb ccid dosfstools fprintd iio-sensor-proxy steam-devices-git thermald tpm2-tss tuned-ppd"
 
 # AUR packages
-ARG AUR_PACKAGES="usb-dirty-pages-udev waydroid"
+ARG AUR_PACKAGES="fenrir-git usb-dirty-pages-udev waydroid"
 
 # ---------------------------
 # Configure Arch snapshot and KDE Linux repo
