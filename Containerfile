@@ -22,11 +22,13 @@ RUN BUILD_DATE=$(curl --fail --silent https://cdn.kde.org/kde-linux/packaging/bu
         >> /etc/pacman.conf
 
 # ---------------------------
-# Make /etc world-readable and create /nix directory
+# Make /etc world-readable and create /nix directory, update useradd defaults
 # ---------------------------
 RUN chmod o+rx /etc && \
     mkdir -p /nix && \
     chmod 755 /nix
+
+RUN sed -i 's|^HOME=.*|HOME=/var/home|' /etc/default/useradd
 
 # ---------------------------
 # Copy local PKGBUILDs
@@ -75,7 +77,7 @@ RUN pacman -Sy --noconfirm --refresh && \
     pacman -S --noconfirm \
         dracut linux linux-firmware ostree composefs systemd \
         btrfs-progs e2fsprogs xfsprogs udev cpio zstd binutils dosfstools \
-        conmon crun netavark skopeo dbus dbus-glib glib2 shadow \
+        conmon crun netavark skopeo dbus dbus-glib glib2 shadow nix \
         kde-banana-* && \
     pacman -S --noconfirm --clean && \
     rm -rf /var/cache/pacman/pkg/*
