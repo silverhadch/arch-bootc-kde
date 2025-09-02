@@ -6,8 +6,7 @@ Experiment to see if Bootc could work on Arch Linux. And it does! With the compo
 
 <img width="2305" height="846" alt="image" src="https://github.com/user-attachments/assets/f496a2f4-0782-408c-b207-c7acdde2e5ac" />
 
-This is not completely functional yet! Seems that dbus has some trouble running in this environment. But its Arch! Its Bootc! Its cool!
-Now you can be even cooler and say that you are using Arch BTW while not having your system break all the time! :)
+Its Arch! Its Bootc! Its cool!
 
 ## Building
 
@@ -21,5 +20,5 @@ Then you can run the `bootable.img` as your boot disk in your preferred hypervis
 
 # Fixes to get GNOME working
 
-- `chmod o+rx /etc` # This is required to make it so dbus can be launched
-- `mount /dev/vda2 /sysroot/boot` # You need this to get `bootc status` and other stuff working
+- `chmod o+rx /etc` - This is required to make it so dbus can be launched
+- `mount /dev/vda2 /sysroot/boot` - You need this to get `bootc status` and other stuff working
