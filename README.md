@@ -18,3 +18,8 @@ just generate-bootable-image # Generates a bootable image for you using bootc!
 ```
 
 Then you can run the `bootable.img` as your boot disk in your preferred hypervisor.
+
+# Fixes to get GNOME working
+
+- `chmod o+rx /etc` # This is required to make it so dbus can be launched
+- `mount /dev/vda2 /sysroot/boot` # You need this to get `bootc status` and other stuff working
