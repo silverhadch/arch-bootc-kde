@@ -130,7 +130,6 @@ RUN pacman -Sy --noconfirm --refresh && \
         $PRINT_PACKAGES \
         $USER_PACKAGES \
         $HARDWARE_PACKAGES && \
-    pacman -S --noconfirm --clean && \
     rm -rf /var/cache/pacman/pkg/*
 
 # ---------------------------
