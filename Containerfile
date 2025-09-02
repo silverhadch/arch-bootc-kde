@@ -39,6 +39,9 @@ ARG USER_PACKAGES="accountsservice aspell cryfs editorconfig-core-c encfs ffmpeg
 # Hardware / Xorg / Wayland
 ARG HARDWARE_PACKAGES="xorg-xwayland acsccid bmusb ccid dosfstools fprintd iio-sensor-proxy steam-devices-git thermald tpm2-tss tuned-ppd"
 
+# AUR packages
+ARG AUR_PACKAGES="usb-dirty-pages-udev waydroid"
+
 # ---------------------------
 # Configure Arch snapshot and KDE Linux repo
 # ---------------------------
@@ -74,7 +77,7 @@ COPY ./packages /packages
 # Install base-devel and refresh twice
 # ---------------------------
 RUN pacman -Sy --noconfirm --refresh --refresh && \
-    pacman -S --noconfirm sudo base-devel && \
+    pacman -S --noconfirm sudo base-devel git && \
     rm -rf /var/cache/pacman/pkg/*
 
 # ---------------------------
@@ -96,6 +99,13 @@ RUN cp -r /packages /home/build && chown -R build:build /home/build/packages && 
     cd /home/build/packages/bootc && makepkg -si --noconfirm && \
     cd /home/build/packages/bootupd && makepkg -si --noconfirm && \
     cd /home/build/packages/composefs-rs && makepkg -si --noconfirm
+
+# ---------------------------
+# Build paru and install AUR packages
+# ---------------------------
+RUN git clone https://aur.archlinux.org/paru.git /home/build/paru && \
+    cd /home/build/paru && makepkg -si --noconfirm && \
+    paru -S --noconfirm --needed $AUR_PACKAGES
 
 USER root
 WORKDIR /
