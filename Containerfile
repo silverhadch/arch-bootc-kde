@@ -13,7 +13,7 @@ ARG KDE_PACKAGES="kde-linux"
 ARG FONT_PACKAGES="noto-fonts noto-fonts-cjk noto-fonts-emoji"
 
 # Multimedia
-ARG MULTIMEDIA_PACKAGES="qt6-multimedia-ffmpeg plymouth flatpakacpid aha clinfo ddcutil dmidecode mesa-utils ntfs-3g nvme-cli vulkan-tools wayland-utils xorg-xdpyinfo"
+ARG MULTIMEDIA_PACKAGES="qt6-multimedia-ffmpeg plymouth flatpak acpid aha clinfo ddcutil dmidecode mesa-utils ntfs-3g nvme-cli vulkan-tools wayland-utils xorg-xdpyinfo"
 
 # CLI utilities
 ARG CLI_PACKAGES="bash-completion bat busybox duf fastfetch fd gping grml-zsh-config htop jq less lsof mcfly nano nix nvtop openssh powertop procs ripgrep tldr trash-cli tree usbutils vim wget wl-clipboard ydotool zsh zsh-completions"
