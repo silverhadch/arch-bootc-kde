@@ -93,7 +93,7 @@ USER build
 WORKDIR /home/build
 
 # ---------------------------
-# Build local PKGBUILDs
+# Build local PKGBUILDs (failures are fatal here; keep as-is)
 # ---------------------------
 RUN cp -r /packages /home/build && chown -R build:build /home/build/packages && \
     cd /home/build/packages/bootc && makepkg -si --noconfirm && \
@@ -101,11 +101,11 @@ RUN cp -r /packages /home/build && chown -R build:build /home/build/packages && 
     cd /home/build/packages/composefs-rs && makepkg -si --noconfirm
 
 # ---------------------------
-# Build paru and install AUR packages
+# Build paru and install AUR packages (allow failure)
 # ---------------------------
 RUN git clone https://aur.archlinux.org/paru.git /home/build/paru && \
-    cd /home/build/paru && makepkg -si --noconfirm && \
-    paru -S --noconfirm --needed $AUR_PACKAGES
+    cd /home/build/paru && makepkg -si --noconfirm || true && \
+    paru -S --noconfirm --needed $AUR_PACKAGES || true
 
 USER root
 WORKDIR /
