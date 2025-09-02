@@ -10,16 +10,28 @@ RUN BUILD_DATE=$(curl --fail --silent https://cdn.kde.org/kde-linux/packaging/bu
     fi && \
     # Point pacman to Arch snapshot
     echo "Server = https://archive.archlinux.org/repos/${BUILD_DATE}/\$repo/os/\$arch" > /etc/pacman.d/mirrorlist && \
-    # Add KDE Linux repos
-    cat <<EOF >> /etc/pacman.conf
-[kde-linux]
-SigLevel = Never
-Server = https://cdn.kde.org/kde-linux/packaging/packages/
+    # Add KDE Linux repos using printf
+    printf '%s\n' \
+        '[kde-linux]' \
+        'SigLevel = Never' \
+        'Server = https://cdn.kde.org/kde-linux/packaging/packages/' \
+        '' \
+        '[kde-linux-debug]' \
+        'SigLevel = Never' \
+        'Server = https://cdn.kde.org/kde-linux/packaging/packages-debug/' \
+        >> /etc/pacman.conf
 
-[kde-linux-debug]
-SigLevel = Never
-Server = https://cdn.kde.org/kde-linux/packaging/packages-debug/
-EOF
+# ---------------------------
+# Create writable directories in /var and set up symlinks
+# ---------------------------
+RUN mkdir -p /var/nix /var/etc && \
+    # Copy existing /etc contents to /var/etc
+    cp -a /etc/. /var/etc/ && \
+    # Remove original directories
+    rm -rf /etc /nix && \
+    # Create symlinks from original paths to /var locations
+    ln -s /var/etc /etc && \
+    ln -s /var/nix /nix
 
 # ---------------------------
 # Copy local PKGBUILDs
@@ -68,7 +80,7 @@ RUN pacman -Sy --noconfirm --refresh && \
     pacman -S --noconfirm \
         dracut linux linux-firmware ostree composefs systemd \
         btrfs-progs e2fsprogs xfsprogs udev cpio zstd binutils dosfstools \
-        conmon crun netavark skopeo dbus dbus-glib glib2 shadow \
+        conmon crun netavark skopeo dbus dbus-glib glib2 shadow nix \
         kde-banana-* && \
     pacman -S --noconfirm --clean && \
     rm -rf /var/cache/pacman/pkg/*
@@ -93,10 +105,9 @@ RUN mkdir -p /boot /sysroot /var/home && \
     ln -s /var/srv /srv
 
 # ---------------------------
-# Temporary root password for dev
+# Cleanup packages directory
 # ---------------------------
-RUN usermod -p '$6$AJv9RHlhEXO6Gpul$5fvVTZXeM0vC03xckTIjY8rdCofnkKSzvF5vEzXDKAby5p3qaOGTHDypVVxKsCE3CbZz7C3NXnbpITrEUvN/Y/' root && \
-    rm -rf /packages
+RUN rm -rf /packages
 
 # ---------------------------
 # Copy OSTree configuration
