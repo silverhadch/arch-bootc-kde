@@ -77,10 +77,11 @@ RUN sed -i 's|^HOME=.*|HOME=/var/home|' "${BOOTC_ROOTFS_MOUNTPOINT}/etc/default/
 # TODO: Replace this for a more robust option when in prod
 RUN usermod --root "${BOOTC_ROOTFS_MOUNTPOINT}" -p "$(echo "changeme" | mkpasswd -s)" root
 
+# Necessary for `bootc install`
+RUN echo -e '[composefs]\nenabled = yes\n[sysroot]\nreadonly = true' | tee "${BOOTC_ROOTFS_MOUNTPOINT}/usr/lib/ostree/prepare-root.conf"
+
 FROM scratch AS runtime
 
 COPY --from=builder /mnt /
-
-COPY files/ostree/prepare-root.conf /usr/lib/ostree/prepare-root.conf
 
 LABEL containers.bootc 1
