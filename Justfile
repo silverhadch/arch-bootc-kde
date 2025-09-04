@@ -1,6 +1,10 @@
-build-containerfile:
-    sudo podman build \
-        -t arch-bootc:latest .
+image_name := env("BUILD_IMAGE_NAME", "arch-bootc")
+image_tag := env("BUILD_IMAGE_TAG", "latest")
+base_dir := env("BUILD_BASE_DIR", ".")
+filesystem := env("BUILD_FILESYSTEM", "ext4")
+
+build-containerfile $image_name=image_name:
+    sudo podman build -t "${image_name}:latest" .
 
 bootc *ARGS:
     sudo podman run \
@@ -10,14 +14,13 @@ bootc *ARGS:
         -v /etc/containers:/etc/containers:Z \
         -v /var/lib/containers:/var/lib/containers \
         -v /dev:/dev \
-        -v .:/data:Z \
+        -v "{{base_dir}}:/data" \
         --security-opt label=type:unconfined_t \
-        arch-bootc:latest bootc {{ARGS}}
+        "{{image_name}}:latest" bootc {{ARGS}}
 
-generate-bootable-image:
+generate-bootable-image $base_dir=base_dir $filesystem=filesystem:
     #!/usr/bin/env bash
-    if [ ! -e ./bootable.img ] ; then
-        fallocate -l 20G ./bootable.img
+    if [ ! -e "${base_dir}/bootable.img" ] ; then
+        fallocate -l 20G "${base_dir}/bootable.img"
     fi
-    just bootc install to-disk --composefs-native --via-loopback /data/bootable.img --filesystem ext4 --wipe
-
+    just bootc install to-disk --composefs-native --via-loopback /data/bootable.img --filesystem "${filesystem}" --wipe
