@@ -12,11 +12,11 @@ bootc *ARGS:
         -it \
         -v /sys/fs/selinux:/sys/fs/selinux \
         -v /etc/containers:/etc/containers:Z \
-        -v /var/lib/containers:/var/lib/containers \
+        -v /var/lib/containers:/var/lib/containers:Z \
         -v /dev:/dev \
         -v "{{base_dir}}:/data" \
         --security-opt label=type:unconfined_t \
-        "{{image_name}}:latest" bootc {{ARGS}}
+        "{{image_name}}:{{image_tag}}" bootc {{ARGS}}
 
 generate-bootable-image $base_dir=base_dir $filesystem=filesystem:
     #!/usr/bin/env bash
