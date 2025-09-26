@@ -45,7 +45,7 @@ RUN sh -c 'export KERNEL_VERSION="$(basename "$(find /usr/lib/modules -maxdepth 
     dracut --force --no-hostonly --reproducible --zstd --verbose --kver "$KERNEL_VERSION"  "/usr/lib/modules/$KERNEL_VERSION/initramfs.img"'
 
 RUN rm -rf /var /boot /home /root /usr/local /srv && \
-    mkdir -p /var /boot && \
+    mkdir -p /var /boot /sysroot && \
     ln -s /var/home /home && \
     ln -s /var/roothome /root && \
     ln -s /var/srv /srv && \
